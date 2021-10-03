@@ -66,13 +66,27 @@ pub fn decrypt(config: &Config) -> Result<(), Box<dyn Error>> {
     // Calculate decrypted file
     println!("Decrypting file");
     let decrypted = {
-        let decryptor = match age::Decryptor::new(&encrypted[..]).unwrap() {
-            age::Decryptor::Passphrase(d) => d,
-            _ => unreachable!(),
+        let decryptor = match age::Decryptor::new(&encrypted[..]) {
+            Ok(d) => {
+                match d {
+                    age::Decryptor::Passphrase(d) => d,
+                    _ => unreachable!(),
+                }
+            }
+            Err(e) => {
+                eprintln!("Input file may not be encrypted.");
+                return Err(Box::new(e));
+            }
         };
 
         let mut decrypted = vec![];
-        let mut reader = decryptor.decrypt(&Secret::new(config.secret.to_owned()), None).unwrap();
+        let mut reader = match decryptor.decrypt(&Secret::new(config.secret.to_owned()), None) {
+            Ok(r) => r,
+            Err(e) => {
+                eprintln!("Secret key may not be correct.");
+                return Err(Box::new(e));
+            }
+        };
         let _ = reader.read_to_end(&mut decrypted);
 
         decrypted
