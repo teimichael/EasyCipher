@@ -28,7 +28,27 @@ OPTIONS:
 - In Encryption Mode, "secret" is a seed
 - In Decryption Mode, "secret" is a decryption key
 
-## Commands
+### Examples
+
+- Encrypt `path_to_file`
+
+```shell
+easy_cipher(.exe) e path_to_file -s="secret seed"
+```
+
+- Decrypt `path_to_file`
+
+```shell
+easy_cipher(.exe) d path_to_file -s="decryption key"
+```
+
+- Decrypt `path_to_file` with `path_to_key`
+
+```shell
+easy_cipher(.exe) d path_to_file -s="$(cat path_to_key)"
+```
+
+## Dev
 
 ### Build Debug
 
